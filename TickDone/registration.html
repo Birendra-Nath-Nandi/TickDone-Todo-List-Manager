@@ -2,29 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - TickDone</title>
-    
+    <title>Create Account - TickDone</title>
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="./assets/css/auth.css">
 </head>
 <body>
-    <div class="auth-wrapper">
-        <h1>Create Your Account</h1>
-        <form id="signup-form" class="auth-form">
-            <input type="text" id="username" class="auth-input" placeholder="Choose a Username" autocomplete="username" required>
-            <input type="email" id="email" class="auth-input" placeholder="Enter Your Email" autocomplete="email" required>
-            <input type="password" id="password" class="auth-input" placeholder="Choose a Password" autocomplete="new-password" required>
-            <button type="submit" class="auth-button">
-                <span class="button-text">Continue</span>
-                <div class="loader"></div>
-            </button>
-            <p id="form-message"></p>
-        </form>
-        <p class="auth-switch">Already have an account? <a href="login.html">Login</a></p>
-    </div>
+    <div class="auth-container">
+        <!-- Left Panel for Decoration -->
+        <div class="auth-panel-left">
+            <img src="./assets/images/logo.png" alt="TickDone Logo">
+            <h2>TickDone</h2>
+            <p>Focus, Organize, Achieve.</p>
+        </div>
 
+        <!-- Right Panel for the Form -->
+        <div class="auth-panel-right">
+            <div class="auth-wrapper">
+                <h1>Create Your Account</h1>
+                <form id="signup-form" class="auth-form">
+                    <!-- Input Group for Username -->
+                    <div class="input-group">
+                        <input type="text" id="username" class="auth-input" placeholder="Choose a Username" required>
+                        <span class="validation-message"></span>
+                    </div>
+                    <!-- Input Group for Email -->
+                    <div class="input-group">
+                        <input type="email" id="email" class="auth-input" placeholder="Enter Your Email" required>
+                        <span class="validation-message"></span>
+                    </div>
+                    <!-- Input Group for Password -->
+                    <div class="input-group">
+                        <div class="password-wrapper">
+                            <input type="password" id="password" class="auth-input" placeholder="Choose a Password" required>
+                            <button type="button" class="password-toggle">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#4A4D57"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 6c3.79 0 7.17 2.13 8.82 5.5C19.17 14.87 15.79 17 12 17s-7.17-2.13-8.82-5.5C4.83 8.13 8.21 6 12 6m0-2C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 5c1.38 0 2.5 1.12 2.5 2.5S13.38 14 12 14s-2.5-1.12-2.5-2.5S10.62 9 12 9m0-2c-2.48 0-4.5 2.02-4.5 4.5S9.52 16 12 16s4.5-2.02 4.5-4.5S14.48 7 12 7z"/></svg>
+                            </button>
+                        </div>
+                        <span class="validation-message"></span>
+                    </div>
+                    
+                    <button type="submit" class="auth-button">
+                        <span class="button-text">Continue</span>
+                        <div class="loader"></div>
+                    </button>
+                    <p id="form-message"></p>
+                </form>
+                <p class="auth-switch">Already have an account? <a href="login.html">Sign in</a></p>
+            </div>
+        </div>
+    </div>
     <script src="./assets/js/auth.js"></script> 
 </body>
 </html>

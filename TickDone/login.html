@@ -9,18 +9,31 @@
     <link rel="stylesheet" href="./assets/css/auth.css">
 </head>
 <body>
-    <div class="auth-wrapper">
-        <h1>Login</h1>
-        <form id="login-form" class="auth-form">
-            <input type="text" id="username" class="auth-input" placeholder="Username" autocomplete="username" required>
-            <input type="password" id="password" class="auth-input" placeholder="Password" autocomplete="current-password" required>
-            <button type="submit" class="auth-button">
-                <span class="button-text">Login</span>
-                <div class="loader"></div>
-            </button>
-            <p id="form-message"></p>
-        </form>
-        <p class="auth-switch">Don't have an account? <a href="registration.html">Sign Up</a></p>
+    <div class="auth-container">
+        <div class="auth-panel-left">
+            <img src="./assets/images/logo.png" alt="TickDone Logo">
+            <h2>TickDone</h2>
+            <p>Focus, Organize, Achieve.</p>
+        </div>
+
+        <div class="auth-panel-right">
+            <div class="auth-wrapper">
+                <h1>Sign In</h1>
+                <form id="login-form" class="auth-form">
+                    <input type="text" id="username" class="auth-input" placeholder="Username or Email" autocomplete="username" required>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" class="auth-input" placeholder="Password" autocomplete="current-password" required>
+                        <a href="forgot_password.html" class="forgot-password-link">Forgot?</a>
+                    </div>
+                    <button type="submit" class="auth-button">
+                        <span class="button-text">Sign In</span>
+                        <div class="loader"></div>
+                    </button>
+                    <p id="form-message"></p>
+                </form>
+                <p class="auth-switch">Don't have an account? <a href="registration.html">Sign up</a></p>
+            </div>
+        </div>
     </div>
 
     <script src="./assets/js/auth.js"></script> 
