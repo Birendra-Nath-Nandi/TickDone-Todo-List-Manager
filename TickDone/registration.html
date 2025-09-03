@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Todo App</title>
+    
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/auth.css">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <h1>Sign Up</h1>
+        <form id="signup-form" class="auth-form">
+            <input type="text" id="username" class="auth-input" placeholder="Choose a Username" autocomplete="username" required>
+            <input type="password" id="password" class="auth-input" placeholder="Choose a Password" autocomplete="new-password" required>
+            <button type="submit" class="auth-button">
+                <span class="button-text">Create Account</span>
+                <div class="loader"></div>
+            </button>
+            <p id="form-message"></p>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="login.html">Login</a></p>
+    </div>
+
+    <script src="./assets/js/auth.js"></script> 
+</body>
+</html>

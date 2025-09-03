@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/app.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    </head>
+<body>
+    <script>
+        fetch('api/check_session.php')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.loggedIn) {
+                    // If the check returns false, redirect to the login page
+                    window.location.href = 'login.html';
+                }
+            })
+            .catch(error => {
+                console.error('Session check failed:', error);
+                // Redirect on error as a security precaution
+                window.location.href = 'login.html';
+            });
+    </script>
+
+    <div class="header-container">
+        <h1>Todo App</h1>
+        <a href="./api/logout.php" class="logout-button">Logout</a>
+    </div>
+
+    <div class="wrapper">
+        <form>
+            <input id="todo-input" type="text" 
+            placeholder="write anything and hit enter to add" autocomplete="off">
+            <button id="add-button">ADD</button>
+        </form>
+        <ul id="todo-list">
+            </ul>
+    </div>
+
+    <script src="./assets/js/app.js" defer></script>
+</body>
+</html>
