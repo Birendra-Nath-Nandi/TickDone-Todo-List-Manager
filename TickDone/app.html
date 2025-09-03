@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App</title>
+    <title>TickDone</title>
     
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     
@@ -17,19 +17,17 @@
             .then(response => response.json())
             .then(data => {
                 if (!data.loggedIn) {
-                    // If the check returns false, redirect to the login page
                     window.location.href = 'login.html';
                 }
             })
             .catch(error => {
                 console.error('Session check failed:', error);
-                // Redirect on error as a security precaution
                 window.location.href = 'login.html';
             });
     </script>
 
     <div class="header-container">
-        <h1>Todo App</h1>
+        <h1>TickDone</h1>
         <a href="./api/logout.php" class="logout-button">Logout</a>
     </div>
 

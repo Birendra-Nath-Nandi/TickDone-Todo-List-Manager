@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - TickDone</title>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/auth.css">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <h1>One Last Step...</h1>
+        <form id="profile-form" class="auth-form">
+            <input type="text" id="first-name" class="auth-input" placeholder="First Name" autocomplete="given-name" required>
+            <input type="text" id="last-name" class="auth-input" placeholder="Last Name" autocomplete="family-name" required>
+            <input type="date" id="dob" class="auth-input" placeholder="Date of Birth" required>
+            <button type="submit" class="auth-button">
+                <span class="button-text">Finish Setup</span>
+                <div class="loader"></div>
+            </button>
+            <p id="form-message"></p>
+        </form>
+    </div>
+
+    <!-- A new JS file for this page's logic -->
+    <script src="./assets/js/profile.js"></script> 
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Todo App</title>
+    <title>Sign Up - TickDone</title>
     
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link rel="stylesheet" href="./assets/css/global.css">
@@ -11,12 +11,13 @@
 </head>
 <body>
     <div class="auth-wrapper">
-        <h1>Sign Up</h1>
+        <h1>Create Your Account</h1>
         <form id="signup-form" class="auth-form">
             <input type="text" id="username" class="auth-input" placeholder="Choose a Username" autocomplete="username" required>
+            <input type="email" id="email" class="auth-input" placeholder="Enter Your Email" autocomplete="email" required>
             <input type="password" id="password" class="auth-input" placeholder="Choose a Password" autocomplete="new-password" required>
             <button type="submit" class="auth-button">
-                <span class="button-text">Create Account</span>
+                <span class="button-text">Continue</span>
                 <div class="loader"></div>
             </button>
             <p id="form-message"></p>
