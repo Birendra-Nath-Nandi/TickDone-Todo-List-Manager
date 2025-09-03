@@ -1,187 +1,401 @@
-const todoForm = document.querySelector('form');
-const todoInput = document.getElementById('todo-input');
-const todoListUL = document.getElementById('todo-list');
-const API_URL = 'api/api.php';
+document.addEventListener('DOMContentLoaded', () => {
+    // --- STATE MANAGEMENT ---
+    let state = {
+        todos: [],
+        lists: [],
+        currentView: { type: 'view', id: 'today' },
+        selectedTaskId: null,
+        selectedTaskDetails: null
+    };
 
-let allTodos = [];
+    // --- DOM SELECTORS ---
+    const todoListUL = document.getElementById('todo-list');
+    const listsContainer = document.getElementById('lists-container');
+    const mainNavLinks = document.getElementById('main-nav-links');
+    const addTaskToggleBtn = document.getElementById('add-task-toggle-btn');
+    const addTaskFormLi = document.getElementById('add-task-form-li');
+    const todoInput = document.getElementById('todo-input');
+    const dueDateInput = document.getElementById('due-date-input');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const addListBtn = document.getElementById('add-list-btn');
+    const addListForm = document.getElementById('add-list-form');
+    const newListInput = document.getElementById('new-list-input');
+    const saveListBtn = document.getElementById('save-list-btn');
+    const cancelListBtn = document.getElementById('cancel-list-btn');
+    const detailsPanel = document.getElementById('task-details-panel');
+    const closePanelBtn = document.getElementById('close-panel-btn');
+    const detailsTaskName = document.getElementById('details-task-name');
+    const detailsTaskDesc = document.getElementById('details-task-desc');
+    const detailsListSelect = document.getElementById('details-list-select');
+    const dueDateSelect = document.getElementById('due-date-select');
+    const detailsDueDate = document.getElementById('details-due-date');
+    const saveChangesBtn = document.getElementById('save-changes-btn');
+    const deleteTaskBtn = document.getElementById('delete-task-btn');
 
-// --- API Communication Functions ---
-
-async function fetchTodos() {
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('Network response was not ok');
-        allTodos = await response.json();
-        updateTodoList();
-    } catch (error) {
-        console.error('Failed to fetch todos:', error);
-    }
-}
-
-async function addTodo() {
-    const todoText = todoInput.value.trim();
-    if (todoText.length > 0) {
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'create', text: todoText })
+    // --- API HELPER ---
+    const api = {
+        async getInitialData() {
+            const r = await fetch('api/api.php?resource=initial_data');
+            return r.json();
+        },
+        async getTodoDetails(id) {
+            const r = await fetch(`api/api.php?resource=todos&id=${id}`);
+            return r.json();
+        },
+        async addTask(text, list_id, due_date) {
+            const r = await fetch('api/api.php?resource=todos', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'create', text, list_id, due_date })
             });
-            await fetchTodos();
-            todoInput.value = "";
-        } catch (error) {
-            console.error('Error adding todo:', error);
+            return r.json();
+        },
+        async addList(name) {
+            const r = await fetch('api/api.php?resource=lists', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'create', name })
+            });
+            return r.json();
+        },
+        async updateStatus(id, completed) {
+            await fetch('api/api.php?resource=todos', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'update_status', id, completed })
+            });
+        },
+        async updateDetails(details) {
+            await fetch('api/api.php?resource=todos', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'update_details', ...details })
+            });
+        },
+        async deleteTask(id) {
+             await fetch('api/api.php?resource=todos', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', id })
+            });
+        },
+        async saveOrder(order) {
+            await fetch('api/api.php?resource=todos', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'reorder', order })
+            });
         }
+    };
+
+    // --- RENDER FUNCTIONS ---
+    function render() {
+        renderSidebarLists();
+        renderMainContent();
+        updateSidebarCounts();
     }
-}
 
-async function deleteTodoItem(todoId) {
-    try {
-        await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'delete', id: todoId })
+    function renderSidebarLists() {
+        listsContainer.innerHTML = '';
+        state.lists.forEach(list => {
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="#" class="nav-link" data-view-type="list" data-view-id="${list.id}"><span class="list-color-dot"></span><span class="nav-text">${list.name}</span><span class="nav-count">0</span></a>`;
+            listsContainer.appendChild(li);
         });
-        allTodos = allTodos.filter(todo => todo.id !== todoId);
-        updateTodoList();
-    } catch (error) {
-        console.error('Error deleting todo:', error);
+        updateActiveNav();
     }
-}
+    
+    function renderMainContent() {
+        const viewTitle = document.getElementById('view-title');
+        const taskCountBadge = document.getElementById('task-count-badge');
+        let currentTasks = [];
+        let title = '';
 
-async function updateTodoStatus(todoId, completed) {
-    try {
-        await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'update_status', id: todoId, completed: completed })
-        });
-
-        // --- FIX STARTS HERE ---
-        // Find the todo in the local array and update its completed status
-        const todo = allTodos.find(t => t.id === todoId);
-        if (todo) {
-            todo.completed = completed;
+        if (state.currentView.type === 'view') {
+            title = state.currentView.id.charAt(0).toUpperCase() + state.currentView.id.slice(1);
+            if (state.currentView.id === 'today') {
+                const today = new Date().toISOString().split('T')[0];
+                currentTasks = state.todos.filter(t => t.due_date === today);
+            } else if (state.currentView.id === 'upcoming') {
+                const today = new Date().toISOString().split('T')[0];
+                currentTasks = state.todos.filter(t => t.due_date && t.due_date > today);
+            }
+        } else {
+            const list = state.lists.find(l => l.id == state.currentView.id);
+            if (list) {
+                title = list.name;
+                currentTasks = state.todos.filter(t => t.list_id == state.currentView.id);
+            }
         }
-        // --- FIX ENDS HERE ---
 
-    } catch (error) {
-        console.error('Error updating todo status:', error);
-    }
-}
+        viewTitle.textContent = title;
+        const uncompletedTasksCount = currentTasks.filter(t => !t.completed).length;
+        taskCountBadge.textContent = uncompletedTasksCount;
+        
+        const taskItems = todoListUL.querySelectorAll('.todo');
+        taskItems.forEach(item => item.remove());
 
-async function renameTodo(todoId, newText) {
-    try {
-        await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'rename', id: todoId, text: newText })
+        currentTasks.forEach(todo => {
+            todoListUL.insertBefore(createTodoItem(todo), addTaskToggleBtn.parentElement);
         });
-        const todo = allTodos.find(t => t.id === todoId);
-        if (todo) todo.task = newText;
-        updateTodoList();
-    } catch (error) {
-        console.error('Error renaming todo:', error);
     }
-}
 
-async function saveOrder() {
-    const orderedIds = Array.from(todoListUL.children).map(li => parseInt(li.dataset.id));
-    const newOrder = orderedIds.map(id => allTodos.find(todo => todo.id === id));
-    allTodos = newOrder;
-
-    try {
-        await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'reorder', order: orderedIds })
+    function createTodoItem(todo) {
+        const li = document.createElement('li');
+        li.className = 'todo';
+        li.dataset.id = todo.id;
+        if (state.selectedTaskId == todo.id) li.classList.add('selected');
+        const todoId = `todo-${todo.id}`;
+        li.innerHTML = `
+            <input type="checkbox" id="${todoId}" ${todo.completed ? 'checked' : ''}>
+            <div class="todo-content">
+                <label class="custom-checkbox" for="${todoId}">
+                    <svg fill="transparent" viewBox="0 -960 960 960"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
+                </label>
+                <span class="todo-text">${todo.task}</span>
+                ${todo.due_date ? `<span class="due-date-text">${todo.due_date}</span>` : ''}
+            </div>
+            <svg class="task-chevron" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m321-80-57-57 240-240-240-240 57-57 297 297L321-80Z"/></svg>
+        `;
+        li.querySelector('input[type="checkbox"]').addEventListener('change', async (e) => {
+            e.stopPropagation();
+            const todoToUpdate = state.todos.find(t => t.id == todo.id);
+            if(todoToUpdate) todoToUpdate.completed = e.target.checked;
+            await api.updateStatus(todo.id, e.target.checked);
+            updateSidebarCounts();
+            renderMainContent();
         });
-    } catch (error) {
-        console.error('Error saving order:', error);
+        li.addEventListener('click', () => handleSelectTask(todo.id));
+        return li;
     }
-}
+    
+    function updateSidebarCounts() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayCount = state.todos.filter(t => t.due_date === today && !t.completed).length;
+        const upcomingCount = state.todos.filter(t => t.due_date && t.due_date > today && !t.completed).length;
+        const todayEl = mainNavLinks.querySelector('[data-view-id="today"] .nav-count');
+        if (todayEl) todayEl.textContent = todayCount;
+        const upcomingEl = mainNavLinks.querySelector('[data-view-id="upcoming"] .nav-count');
+        if (upcomingEl) upcomingEl.textContent = upcomingCount;
+        state.lists.forEach(list => {
+            const listCount = state.todos.filter(t => t.list_id == list.id && !t.completed).length;
+            const listLink = listsContainer.querySelector(`.nav-link[data-view-id="${list.id}"] .nav-count`);
+            if (listLink) listLink.textContent = listCount;
+        });
+    }
 
+    function updateActiveNav() {
+        document.querySelectorAll('.nav-link.active').forEach(link => link.classList.remove('active'));
+        const { type, id } = state.currentView;
+        const selector = `.nav-link[data-view-type="${type}"][data-view-id="${id}"]`;
+        const activeLink = document.querySelector(selector);
+        if (activeLink) activeLink.classList.add('active');
+    }
 
-// --- DOM Manipulation (This part has no changes) ---
+    // --- UTILITY FUNCTIONS ---
+    function getFormattedDate(offset = 0) {
+        const date = new Date();
+        date.setDate(date.getDate() + offset);
+        return date.toISOString().split('T')[0];
+    }
+    
+    // --- EVENT HANDLERS & LOGIC ---
+    function handleViewChange(type, id) {
+        state.currentView = { type, id: id };
+        updateActiveNav();
+        renderMainContent();
+        closeDetailsPanel();
+    }
 
-function updateTodoList() {
-    todoListUL.innerHTML = "";
-    allTodos.forEach((todo) => {
-        const todoItem = createTodoItem(todo);
-        todoListUL.append(todoItem);
-    });
-}
-
-function createTodoItem(todo) {
-    const todoId = "todo-" + todo.id;
-    const todoLI = document.createElement("li");
-    todoLI.className = "todo";
-    todoLI.dataset.id = todo.id;
-    todoLI.innerHTML = `
-        <input type="checkbox" id="${todoId}">
-        <label class="custom-checkbox" for="${todoId}">
-            <svg fill="transparent" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>
-        </label>
-        <label for="${todoId}" class="todo-text">
-            ${todo.task}
-        </label>
-        <button class="icon-button edit-button">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-528q12-12 27-18t31-6q16 0 31 6t26 18l57 57q12 11 18 26t6 31q0 16-6 31t-18 27L290-120H120Zm640-640-57-57 57 57ZM200-200Zm360-360Z"/></svg>
-        </button>
-        <button class="icon-button delete-button">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
-        </button>
-    `;
-
-    const deleteButton = todoLI.querySelector(".delete-button");
-    deleteButton.addEventListener("click", () => deleteTodoItem(todo.id));
-    const checkbox = todoLI.querySelector("input");
-    checkbox.checked = todo.completed;
-    checkbox.addEventListener("change", () => updateTodoStatus(todo.id, checkbox.checked));
-    const editButton = todoLI.querySelector(".edit-button");
-    editButton.addEventListener("click", () => {
-        const todoTextLabel = todoLI.querySelector(".todo-text");
-        const oldText = todoTextLabel.innerText;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = oldText;
-        input.className = 'edit-input';
-        todoTextLabel.replaceWith(input);
-        input.focus();
-        const save = () => {
-            const newText = input.value.trim();
-            if (newText && newText !== oldText) {
-                renameTodo(todo.id, newText);
+    async function handleSelectTask(id) {
+        state.selectedTaskId = id;
+        try {
+            const taskData = await api.getTodoDetails(id);
+            state.selectedTaskDetails = taskData;
+            detailsTaskName.value = taskData.task;
+            detailsTaskDesc.value = taskData.description || '';
+            
+            const today = getFormattedDate(0);
+            const tomorrow = getFormattedDate(1);
+            if (!taskData.due_date) {
+                dueDateSelect.value = 'no_date';
+                detailsDueDate.style.display = 'none';
+                detailsDueDate.value = '';
+            } else if (taskData.due_date === today) {
+                dueDateSelect.value = 'today';
+                detailsDueDate.style.display = 'none';
+            } else if (taskData.due_date === tomorrow) {
+                dueDateSelect.value = 'tomorrow';
+                detailsDueDate.style.display = 'none';
             } else {
-                input.replaceWith(todoTextLabel);
+                dueDateSelect.value = 'choose';
+                detailsDueDate.style.display = 'block';
+                detailsDueDate.value = taskData.due_date;
             }
-            editButton.style.display = 'flex';
-        };
-        editButton.style.display = 'none';
-        input.addEventListener('blur', save);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') input.blur();
-            if (e.key === 'Escape') {
-                input.replaceWith(todoTextLabel);
-                editButton.style.display = 'flex';
-            }
-        });
-    });
-    return todoLI;
-}
 
-// --- Initial Setup ---
-todoForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    addTodo();
-});
-document.addEventListener('DOMContentLoaded', async () => {
-    await fetchTodos();
-    new Sortable(todoListUL, {
-        animation: 150,
-        ghostClass: 'sortable-ghost',
-        onEnd: () => {
-            saveOrder();
+            detailsListSelect.innerHTML = '';
+            state.lists.forEach(list => {
+                const option = document.createElement('option');
+                option.value = list.id;
+                option.textContent = list.name;
+                if (list.id == taskData.list_id) option.selected = true;
+                detailsListSelect.appendChild(option);
+            });
+            detailsPanel.classList.add('visible');
+            renderMainContent();
+        } catch (error) {
+            console.error(error);
+            state.selectedTaskId = null;
         }
-    });
+    }
+
+    function closeDetailsPanel() {
+        if(state.selectedTaskId !== null) {
+            state.selectedTaskId = null;
+            detailsPanel.classList.remove('visible');
+            renderMainContent();
+        }
+    }
+
+    async function handleSaveChanges() {
+        const id = state.selectedTaskId;
+        
+        let dueDate = null;
+        if (dueDateSelect.value === 'today') {
+            dueDate = getFormattedDate(0);
+        } else if (dueDateSelect.value === 'tomorrow') {
+            dueDate = getFormattedDate(1);
+        } else if (dueDateSelect.value === 'choose') {
+            dueDate = detailsDueDate.value || null;
+        }
+
+        const updatedData = {
+            id,
+            task: detailsTaskName.value.trim(),
+            description: detailsTaskDesc.value.trim(),
+            list_id: detailsListSelect.value,
+            due_date: dueDate
+        };
+        await api.updateDetails(updatedData);
+        const { todos } = await api.getInitialData();
+        state.todos = todos;
+        closeDetailsPanel();
+        render();
+    }
+
+    async function handleDeleteTask() {
+        if (!confirm('Are you sure you want to delete this task?')) return;
+        const id = state.selectedTaskId;
+        await api.deleteTask(id);
+        state.todos = state.todos.filter(t => t.id != id);
+        closeDetailsPanel();
+        render();
+    }
+
+    async function handleAddTask() {
+        const text = todoInput.value.trim();
+        const dueDate = dueDateInput.value;
+        if (!text) return;
+        let listId = (state.currentView.type === 'list') ? state.currentView.id : (state.lists[0]?.id || null);
+        if (!listId) { alert('Please create a list first.'); return; }
+        const newTask = await api.addTask(text, listId, dueDate || null);
+        state.todos.push(newTask);
+        todoInput.value = '';
+        dueDateInput.value = '';
+        addTaskFormLi.style.display = 'none';
+        addTaskToggleBtn.parentElement.style.display = 'block';
+        render();
+    }
+
+    async function handleAddList() {
+        const name = newListInput.value.trim();
+        if (!name) return;
+        try {
+            const newList = await api.addList(name);
+            state.lists.push(newList);
+            newListInput.value = '';
+            addListForm.style.display = 'none';
+            addListBtn.style.display = 'block';
+            render();
+        } catch (error) {
+            console.error('Failed to add list:', error);
+        }
+    }
+    
+    // --- INITIALIZATION ---
+    async function init() {
+        try {
+            const { lists, todos } = await api.getInitialData();
+            state.lists = lists;
+            state.todos = todos;
+            render();
+
+            document.querySelector('.sidebar-nav').addEventListener('click', (e) => {
+                const link = e.target.closest('.nav-link');
+                if (link) {
+                    e.preventDefault();
+                    handleViewChange(link.dataset.viewType, link.dataset.viewId);
+                }
+            });
+
+            addTaskToggleBtn.addEventListener('click', () => {
+                addTaskFormLi.style.display = 'block';
+                addTaskToggleBtn.parentElement.style.display = 'none';
+                todoInput.focus();
+            });
+            addTaskBtn.addEventListener('click', handleAddTask);
+            todoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAddTask(); });
+            
+            document.addEventListener('click', (e) => {
+                if (addTaskFormLi.style.display === 'block' && !addTaskFormLi.contains(e.target) && !addTaskToggleBtn.contains(e.target)) {
+                     addTaskFormLi.style.display = 'none';
+                     addTaskToggleBtn.parentElement.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (addTaskFormLi.style.display === 'block') {
+                        addTaskFormLi.style.display = 'none';
+                        addTaskToggleBtn.parentElement.style.display = 'block';
+                    }
+                    closeDetailsPanel();
+                }
+            });
+            addListBtn.addEventListener('click', () => {
+                addListForm.style.display = 'block';
+                addListBtn.style.display = 'none';
+                newListInput.focus();
+            });
+            cancelListBtn.addEventListener('click', () => {
+                addListForm.style.display = 'none';
+                addListBtn.style.display = 'block';
+            });
+            saveListBtn.addEventListener('click', handleAddList);
+            
+            closePanelBtn.addEventListener('click', closeDetailsPanel);
+            saveChangesBtn.addEventListener('click', handleSaveChanges);
+            deleteTaskBtn.addEventListener('click', handleDeleteTask);
+
+            dueDateSelect.addEventListener('change', () => {
+                if (dueDateSelect.value === 'choose') {
+                    detailsDueDate.style.display = 'block';
+                    detailsDueDate.focus();
+                } else {
+                    detailsDueDate.style.display = 'none';
+                }
+            });
+
+            new Sortable(todoListUL, {
+                animation: 150,
+                filter: '.add-task-toggle, .add-task-form-container',
+                onEnd: async (evt) => {
+                    const orderedIds = Array.from(evt.target.querySelectorAll('.todo')).map(li => parseInt(li.dataset.id));
+                    await api.saveOrder(orderedIds);
+                    const { todos } = await api.getInitialData();
+                    state.todos = todos;
+                    renderMainContent();
+                }
+            });
+        } catch (error) {
+            console.error("Initialization failed:", error);
+            document.body.innerHTML = '<p style="color: white; text-align: center; margin-top: 50px;">Could not load application data. Please try again later.</p>';
+        }
+    }
+
+    init();
 });

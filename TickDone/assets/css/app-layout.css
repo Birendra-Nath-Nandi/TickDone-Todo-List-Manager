@@ -1,0 +1,108 @@
+/* General App Layout */
+body { display: block; overflow: hidden; }
+.app-container { display: flex; height: 100vh; background-color: var(--background); position: relative; overflow: hidden; }
+
+/* --- Sidebar Styles --- */
+.sidebar {
+    flex-basis: 280px; flex-shrink: 0; background-color: var(--primary-color);
+    border-right: 1px solid var(--secondary-color); display: flex;
+    flex-direction: column; padding: 20px; color: var(--text-color); z-index: 10;
+}
+.sidebar-header h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 25px; }
+.sidebar-nav { flex-grow: 1; overflow-y: auto; }
+.nav-section { margin-bottom: 25px; }
+.nav-title {
+    color: var(--secondary-color); font-size: 0.8rem; font-weight: 600;
+    text-transform: uppercase; margin-bottom: 10px; padding-left: 10px;
+}
+.sidebar-nav ul { list-style: none; padding: 0; }
+.sidebar-nav .nav-link {
+    display: flex; align-items: center; gap: 12px; padding: 10px;
+    border-radius: 8px; color: var(--text-color); text-decoration: none;
+    font-size: 1rem; transition: background-color 200ms ease;
+}
+.sidebar-nav .nav-link svg {
+    fill: var(--secondary-color); width: 20px; height: 20px;
+    flex-shrink: 0; transition: fill 200ms ease;
+}
+.sidebar-nav .nav-link:hover { background-color: var(--background); }
+.sidebar-nav .nav-link.active { background-color: var(--accent-color); color: var(--background); font-weight: 600; }
+.sidebar-nav .nav-link.active svg { fill: var(--background); }
+.nav-text { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-count {
+    font-size: 0.8rem; background-color: var(--background); color: var(--secondary-color);
+    border-radius: 5px; padding: 2px 6px; font-weight: 600;
+}
+.sidebar-nav .nav-link.active .nav-count { background-color: rgba(0, 0, 0, 0.2); color: var(--background); }
+.list-color-dot { width: 10px; height: 10px; border-radius: 50%; background-color: var(--secondary-color); flex-shrink: 0; }
+.add-new-button {
+    background: none; border: none; color: var(--secondary-color); font: inherit; font-size: 0.9rem;
+    cursor: pointer; padding: 10px; width: 100%; text-align: left; border-radius: 8px;
+}
+.add-new-button:hover { color: var(--accent-color); }
+.add-new-form { margin-top: 10px; padding: 0 5px; }
+.add-new-form input {
+    width: 100%; padding: 8px; background: var(--background);
+    border: 1px solid var(--secondary-color); border-radius: 5px; color: var(--text-color);
+}
+.add-new-form button { padding: 6px 10px; margin-top: 5px; cursor: pointer; border-radius: 5px; border: 1px solid var(--secondary-color); }
+#save-list-btn, #save-tag-btn { background-color: var(--accent-color); color: var(--background); border-color: var(--accent-color); }
+.sidebar-footer { padding-top: 20px; border-top: 1px solid var(--secondary-color); }
+.logout-button { color: var(--secondary-color); text-decoration: none; padding: 10px; display: block; border-radius: 8px; }
+.logout-button:hover { color: #ff5555; background-color: var(--background); }
+.sidebar-tags-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 10px 10px; }
+.tag-pill {
+    background-color: var(--background); color: var(--secondary-color);
+    padding: 4px 10px; border-radius: 15px; font-size: 0.8rem;
+    font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
+}
+
+/* --- Main Content & Task Styles --- */
+.main-content {
+    flex-grow: 1; padding: 30px 40px; display: flex; flex-direction: column; overflow: hidden;
+}
+.main-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; flex-shrink: 0; }
+.main-header h1 { font-size: 2.5rem; color: var(--text-color); text-transform: none; text-align: left; }
+.task-count-badge {
+    background-color: var(--primary-color); color: var(--secondary-color); font-size: 1.5rem;
+    font-weight: 600; padding: 2px 12px; border-radius: 8px;
+}
+.task-area { flex-grow: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; }
+.todo-list-container { list-style: none; padding: 0; }
+.add-task-toggle { list-style: none; }
+#add-task-toggle-btn {
+    width: 100%; background: none; border: none; color: var(--secondary-color); padding: 15px;
+    text-align: left; font: inherit; cursor: pointer; border-radius: 10px;
+    transition: background-color 200ms ease, color 200ms ease; display: flex; align-items: center; gap: 10px;
+}
+#add-task-toggle-btn:hover { background-color: var(--primary-color); color: var(--text-color); }
+.add-task-form-container { padding: 5px; background-color: var(--primary-color); border-radius: 10px; margin-bottom: 10px; }
+.add-task-wrapper { display: flex; gap: 10px; align-items: center; }
+#todo-input {
+    flex-grow: 1; background: none; border: none; color: var(--text-color);
+    font: inherit; font-size: 1rem; outline: none; padding: 10px;
+}
+#due-date-input, #add-task-btn {
+    background: var(--background); border: 1px solid var(--secondary-color); color: var(--secondary-color);
+    border-radius: 5px; padding: 8px; cursor: pointer;
+}
+#add-task-btn { background-color: var(--accent-color); color: var(--background); border: none; font-weight: 600; }
+.todo {
+    margin-bottom: 2px; border-bottom: 1px solid var(--primary-color); display: flex;
+    align-items: center; cursor: pointer; transition: background-color 200ms ease; border-radius: 8px;
+}
+.todo:hover { background-color: var(--primary-color); }
+.todo.selected { background-color: var(--secondary-color); }
+.todo-content { display: flex; align-items: center; flex-grow: 1; padding: 8px 10px; }
+.todo .todo-text { flex-grow: 1; user-select: none; margin-left: 15px; font-size: 1rem; }
+.custom-checkbox {
+    border: 2px solid var(--accent-color); border-radius: 50%; min-height: 20px;
+    min-width: 20px; display: flex; justify-content: center; align-items: center;
+    flex-shrink: 0; transition: 200ms ease;
+}
+input[type="checkbox"] { display: none; }
+input[type="checkbox"]:checked ~ .todo-content .todo-text { text-decoration: line-through; color: var(--secondary-color); }
+input[type="checkbox"]:checked ~ .todo-content .custom-checkbox { background-color: var(--accent-color); }
+input[type="checkbox"]:checked ~ .todo-content .custom-checkbox svg { fill: var(--primary-color); }
+.due-date-text { font-size: 0.8rem; color: var(--secondary-color); padding: 0 15px; }
+.task-chevron { fill: var(--secondary-color); width: 24px; height: 24px; margin-left: auto; margin-right: 10px; flex-shrink: 0; }

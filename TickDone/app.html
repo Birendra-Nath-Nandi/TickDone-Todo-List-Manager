@@ -3,42 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TickDone</title>
-    
+    <title>Dashboard - TickDone</title>
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
-    
     <link rel="stylesheet" href="./assets/css/global.css">
-    <link rel="stylesheet" href="./assets/css/app.css">
+    <link rel="stylesheet" href="./assets/css/app-layout.css">
+    <link rel="stylesheet" href="./assets/css/details-panel.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    </head>
+</head>
 <body>
     <script>
         fetch('api/check_session.php')
             .then(response => response.json())
-            .then(data => {
-                if (!data.loggedIn) {
-                    window.location.href = 'login.html';
-                }
-            })
-            .catch(error => {
-                console.error('Session check failed:', error);
-                window.location.href = 'login.html';
-            });
+            .then(data => { if (!data.loggedIn) { window.location.href = 'login.html'; } })
+            .catch(() => window.location.href = 'login.html');
     </script>
 
-    <div class="header-container">
-        <h1>TickDone</h1>
-        <a href="./api/logout.php" class="logout-button">Logout</a>
-    </div>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Menu</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <p class="nav-title">TASKS</p>
+                    <ul id="main-nav-links">
+                        <li>
+                            <a href="#" class="nav-link active" data-view-type="view" data-view-id="today">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M220-80q-24 0-42-18t-18-42v-680q0-24 18-42t42-18h520q24 0 42 18t18 42v680q0 24-18 42t-42 18H220Zm0-80h520v-680H220v680Zm0 0v-680 680Zm260-440q-17 0-28.5-11.5T440-640q0-17 11.5-28.5T480-680q17 0 28.5 11.5T520-640q0 17-11.5 28.5T480-520Zm-160 0q-17 0-28.5-11.5T280-640q0-17 11.5-28.5T320-680q17 0 28.5 11.5T360-640q0 17-11.5 28.5T320-520Zm320 0q-17 0-28.5-11.5T600-640q0-17 11.5-28.5T640-680q17 0 28.5 11.5T680-640q0 17-11.5 28.5T640-520ZM480-360q-17 0-28.5-11.5T440-400q0-17 11.5-28.5T480-440q17 0 28.5 11.5T520-400q0 17-11.5 28.5T480-360Zm-160 0q-17 0-28.5-11.5T280-400q0-17 11.5-28.5T320-440q17 0 28.5 11.5T360-400q0 17-11.5 28.5T320-360Zm320 0q-17 0-28.5-11.5T600-400q0-17 11.5-28.5T640-440q17 0 28.5 11.5T680-400q0 17-11.5 28.5T640-360ZM480-200q-17 0-28.5-11.5T440-240q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240q0 17-11.5 28.5T480-200Z"/></svg>
+                                <span class="nav-text">Today</span>
+                                <span class="nav-count">0</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link" data-view-type="view" data-view-id="upcoming">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-80 200-360l56-56 224 224 224-224 56 56L480-80Z"/></svg>
+                                <span class="nav-text">Upcoming</span>
+                                <span class="nav-count">0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-title">LISTS</p>
+                    <ul id="lists-container"></ul>
+                    <button class="add-new-button" id="add-list-btn">+ Add New List</button>
+                    <div id="add-list-form" class="add-new-form" style="display: none;">
+                        <input type="text" id="new-list-input" placeholder="List Name">
+                        <button id="save-list-btn">Save</button>
+                        <button id="cancel-list-btn">Cancel</button>
+                    </div>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="./api/logout.php" class="logout-button">Sign Out</a>
+            </div>
+        </aside>
 
-    <div class="wrapper">
-        <form>
-            <input id="todo-input" type="text" 
-            placeholder="write anything and hit enter to add" autocomplete="off">
-            <button id="add-button">ADD</button>
-        </form>
-        <ul id="todo-list">
-            </ul>
+        <main class="main-content">
+            <header class="main-header">
+                <h1 id="view-title">Today</h1>
+                <span id="task-count-badge" class="task-count-badge">0</span>
+            </header>
+            <div class="task-area">
+                <ul id="todo-list" class="todo-list-container">
+                    <li class="add-task-toggle">
+                        <button id="add-task-toggle-btn">+ Add New Task</button>
+                    </li>
+                    <li id="add-task-form-li" class="add-task-form-container" style="display: none;">
+                        <div class="add-task-wrapper">
+                            <input type="text" id="todo-input" placeholder="Task name..." autocomplete="off">
+                            <input type="date" id="due-date-input" title="Set a due date">
+                            <button id="add-task-btn">Add</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </main>
+
+        <aside id="task-details-panel" class="details-panel">
+             <div class="panel-header">
+                 <h3 class="panel-title">Task details</h3>
+                <button id="close-panel-btn" class="icon-button">&times;</button>
+            </div>
+            <div class="panel-content">
+                <div class="form-group">
+                    <div class="panel-input-wrapper">
+                        <input type="text" id="details-task-name" class="panel-input-title" placeholder="Task Name" autocomplete="off">
+                        <svg class="rename-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-528q12-12 27-18t31-6q16 0 31 6t26 18l57 57q12 11 18 26t6 31q0 16-6 31t-18 27L290-120H120Zm640-640-57-57 57 57ZM200-200Zm360-360Z"/></svg>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <textarea id="details-task-desc" class="panel-textarea" placeholder="Description"></textarea>
+                </div>
+
+                <div class="panel-meta-grid">
+                    <div class="meta-item">
+                        <label>List</label>
+                        <select id="details-list-select" class="panel-select"></select>
+                    </div>
+                    <div class="meta-item">
+                        <label>Due date</label>
+                        <div class="due-date-wrapper">
+                            <select id="due-date-select" class="panel-select">
+                                <option value="no_date">No Date</option>
+                                <option value="today">Today</option>
+                                <option value="tomorrow">Tomorrow</option>
+                                <option value="choose">Choose a date</option>
+                            </select>
+                            <input type="date" id="details-due-date" class="panel-input" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button id="delete-task-btn" class="panel-button danger">Delete Task</button>
+                <button id="save-changes-btn" class="panel-button primary">Save Changes</button>
+            </div>
+        </aside>
     </div>
 
     <script src="./assets/js/app.js" defer></script>
