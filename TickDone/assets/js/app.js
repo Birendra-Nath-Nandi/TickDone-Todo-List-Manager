@@ -16,8 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const addTaskToggleBtn = document.getElementById('add-task-toggle-btn');
     const addTaskFormLi = document.getElementById('add-task-form-li');
     const todoInput = document.getElementById('todo-input');
-    const dueDateInput = document.getElementById('due-date-input');
+    // REMOVED: const dueDateInput = document.getElementById('due-date-input');
     const addTaskBtn = document.getElementById('add-task-btn');
+    const cancelAddTaskBtn = document.getElementById('cancel-add-task-btn');
     
     // Details Panel Selectors
     const detailsPanel = document.getElementById('task-details-panel');
@@ -201,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeLink) activeLink.classList.add('active');
     }
 
-    // --- MODAL & PANEL LOGIC ---
+    // --- MODAL, PANEL & FORM LOGIC ---
     function openAddListModal() {
         newListNameInput.value = '';
         addListModal.classList.add('visible');
@@ -220,13 +221,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function resetAddTaskForm() {
+        todoInput.value = '';
+        // REMOVED: dueDateInput.value = '';
+        addTaskFormLi.style.display = 'none';
+        addTaskToggleBtn.parentElement.style.display = 'list-item';
+    }
+
     function getFormattedDate(offset = 0) {
         const date = new Date();
         date.setDate(date.getDate() + offset);
         return date.toISOString().split('T')[0];
     }
 
-    // --- EVENT HANDLERS & LOGIC ---
+    // --- EVENT HANDLERS ---
     function handleViewChange(type, id) {
         state.currentView = { type, id: String(id) };
         updateActiveNav();
@@ -315,14 +323,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function handleAddTask() {
         const text = todoInput.value.trim();
-        const dueDate = dueDateInput.value;
+        // REMOVED: const dueDate = dueDateInput.value;
         if (!text) return;
         let listId = (state.currentView.type === 'list') ? state.currentView.id : (state.lists[0]?.id || null);
         if (!listId) { alert('Please create a list first to add tasks.'); return; }
-        const newTask = await api.addTask(text, listId, dueDate || null);
+        const newTask = await api.addTask(text, listId, null); // MODIFIED: Pass null for due_date
         state.todos.push(newTask);
-        todoInput.value = '';
-        dueDateInput.value = '';
+        resetAddTaskForm();
         render();
     }
 
@@ -347,11 +354,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confirm(`Are you sure you want to delete the "${list.name}" list?\nTasks in this list will become uncategorized.`)) {
             try {
                 await api.deleteList(listId);
-                // If the deleted list was the active view, switch to 'Today'
                 if (state.currentView.type === 'list' && state.currentView.id == listId) {
                     state.currentView = { type: 'view', id: 'today' };
                 }
-                // **FIX:** Re-fetch all data from the server to guarantee UI consistency
                 await reloadData();
             } catch (error) {
                 console.error("Failed to delete list:", error);
@@ -360,13 +365,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // NEW ROBUST DATA RELOAD FUNCTION
     async function reloadData() {
         try {
             const data = await api.getInitialData();
             state.lists = data.lists || [];
             state.todos = data.todos || [];
-            render(); // Re-render the entire UI with fresh data
+            render();
         } catch (error) {
             console.error("Failed to reload data:", error);
             document.body.innerHTML = `<div class="loading-error">${error.message}. Please try again later.</div>`;
@@ -375,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- INITIALIZATION ---
     async function init() {
-        // Event Listeners are only set once during initialization
         document.querySelector('.sidebar-nav').addEventListener('click', (e) => {
             const link = e.target.closest('.nav-link');
             const deleteBtn = e.target.closest('.delete-list-btn');
@@ -394,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
             todoInput.focus();
         });
         addTaskBtn.addEventListener('click', handleAddTask);
+        cancelAddTaskBtn.addEventListener('click', resetAddTaskForm);
         todoInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAddTask(); });
         
         addListBtn.addEventListener('click', openAddListModal);
@@ -419,12 +423,10 @@ document.addEventListener('DOMContentLoaded', () => {
             onEnd: async (evt) => {
                 const orderedIds = Array.from(evt.target.querySelectorAll('.todo')).map(li => parseInt(li.dataset.id));
                 await api.saveOrder(orderedIds);
-                // Re-fetch to ensure positions are correct
                 await reloadData();
             }
         });
 
-        // Initial data load
         await reloadData();
     }
 

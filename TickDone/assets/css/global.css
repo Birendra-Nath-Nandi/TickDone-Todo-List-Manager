@@ -4,6 +4,7 @@
     --secondary-color: #4A4D57;
     --accent-color: #00FFC4;
     --text-color: #F9F9F9;
+    --red-hover: #ff6b6b; /* Or any shade of red you prefer */
 }
 
 * {
