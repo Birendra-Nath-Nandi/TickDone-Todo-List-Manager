@@ -63,8 +63,8 @@ if (!empty($data->username) && !empty($data->email) && !empty($data->password)) 
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'hello.tickdone@gmail.com';
-            $mail->Password   = 'kfea gzyl vjpa arvh';
+            $mail->Username   = 'youer_email_address';
+            $mail->Password   = 'your_app_password';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
