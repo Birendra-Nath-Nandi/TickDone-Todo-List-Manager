@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - TickDone</title>
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/profile.css">
+</head>
+<body>
+    <script>
+        // Session check to protect the page
+        fetch('api/check_session.php')
+            .then(response => response.json())
+            .then(data => { if (!data.loggedIn) { window.location.href = 'login.html'; } })
+            .catch(() => window.location.href = 'login.html');
+    </script>
+
+    <div class="profile-page-layout">
+        <div class="profile-container">
+            <div class="profile-content-grid">
+                <div class="profile-identity-card">
+                    <img src="./assets/images/logo.png" alt="TickDone Logo">
+                    <h2>TickDone</h2>
+                    <p>Focus, Organize, Achieve.</p>
+                </div>
+                <div class="profile-details-card">
+                    <h3 class="details-header">Account Information</h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <label>Username</label>
+                            <p id="username">...</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Email Address</label>
+                            <p id="email">...</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>First Name</label>
+                            <p id="first-name">...</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Last Name</label>
+                            <p id="last-name">...</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Age</label>
+                            <p id="age">...</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Joining Date</label>
+                            <p id="joining-date">...</p>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <a href="app.html" class="action-button secondary">Dashboard</a>
+                        <a href="forgot_password.html" class="action-button primary">Change Password</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./assets/js/profile-view.js"></script>
+</body>
+</html>
