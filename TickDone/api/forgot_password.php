@@ -44,8 +44,8 @@ if ($stmt->rowCount() > 0) {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'bnnandi.tech@gmail.com';
-            $mail->Password   = 'frjz tksu vxbv kfra';
+            $mail->Username   = 'your_email_address';
+            $mail->Password   = 'your_app_password';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
 
