@@ -1,0 +1,226 @@
+/* TickDone-Todo-List-Manager/TickDone/assets/css/about.css */
+
+body.about-page {
+    background-color: #0D0D0D;
+    color: #E5E7EB;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.highlight {
+    color: var(--accent-color);
+}
+
+/* --- Decorative Background Glows (Same as landing) --- */
+.glow-element {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(200px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.glow-element.top-left {
+    width: 500px;
+    height: 500px;
+    top: -250px;
+    left: -250px;
+    background: rgba(0, 255, 196, 0.1);
+}
+
+.glow-element.bottom-right {
+    width: 500px;
+    height: 500px;
+    bottom: -250px;
+    right: -250px;
+    background: rgba(74, 77, 87, 0.15);
+}
+
+/* --- Header --- */
+.about-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-header.scrolled {
+    background-color: rgba(13, 13, 13, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- FIXED: Header Logo and Nav Styles --- */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.logo img {
+    height: 32px;
+    width: auto; /* Maintain aspect ratio */
+}
+
+.about-nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-button {
+    background-color: var(--accent-color);
+    color: #0D0D0D;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.nav-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 255, 196, 0.25);
+}
+
+
+/* --- Main Content --- */
+.about-main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4rem 5%;
+}
+
+/* --- Project Info Section --- */
+.project-info-section {
+    padding-bottom: 6rem;
+    text-align: center;
+}
+.project-card {
+    background: rgba(28, 29, 32, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.project-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+.project-subtitle {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+.project-description {
+    font-size: 1.1rem;
+    color: #A0AEC0;
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* --- Team Section --- */
+.team-section {
+    padding-bottom: 4rem;
+}
+.section-title {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+.section-title h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.team-card {
+    background: rgba(28, 29, 32, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.team-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 255, 196, 0.15);
+    border-color: rgba(0, 255, 196, 0.4);
+}
+.team-card-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background-color: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--secondary-color);
+}
+.team-card-icon svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--secondary-color);
+}
+.team-card h3 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+.team-card p {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* --- Animations (Same as landing) --- */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* Staggered delay for team cards */
+.team-card.animate-on-scroll:nth-child(1) { transition-delay: 0.1s; }
+.team-card.animate-on-scroll:nth-child(2) { transition-delay: 0.2s; }
+.team-card.animate-on-scroll:nth-child(3) { transition-delay: 0.3s; }
+.team-card.animate-on-scroll:nth-child(4) { transition-delay: 0.4s; }
+.team-card.animate-on-scroll:nth-child(5) { transition-delay: 0.5s; }
+.team-card.animate-on-scroll:nth-child(6) { transition-delay: 0.6s; }
+.team-card.animate-on-scroll:nth-child(7) { transition-delay: 0.7s; }
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .project-title {
+        font-size: 2.2rem;
+    }
+    .project-card {
+        padding: 2rem;
+    }
+    .section-title h2 {
+        font-size: 2rem;
+    }
+}

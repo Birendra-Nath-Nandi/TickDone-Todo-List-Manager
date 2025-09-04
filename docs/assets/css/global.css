@@ -1,0 +1,33 @@
+:root {
+    --background: #101114;
+    --primary-color: #1C1D20;
+    --secondary-color: #4A4D57;
+    --accent-color: #00FFC4;
+    --text-color: #F9F9F9;
+    --red-hover: #ff6b6b; /* Or any shade of red you prefer */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Better default box-sizing */
+}
+
+html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16pt;
+    color: var(--text-color);
+}
+
+body {
+    min-height: 100vh;
+    background-color: var(--background);
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--accent-color);
+}
