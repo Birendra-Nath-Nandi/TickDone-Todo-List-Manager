@@ -36,7 +36,6 @@ if ($method === 'GET') {
     } elseif ($resource === 'todos' && isset($_GET['id'])) {
         $todo_id = $_GET['id'];
         
-        // Get base task details
         $stmt = $conn->prepare("SELECT id, task, description, completed, due_date, list_id FROM todos WHERE id = :id AND user_id = :user_id");
         $stmt->bindParam(':id', $todo_id, PDO::PARAM_INT);
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -68,8 +67,9 @@ if ($method === 'POST') {
                     $maxPos = $posStmt->fetch(PDO::FETCH_ASSOC)['max_pos'];
                     $newPos = ($maxPos === null) ? 0 : $maxPos + 1;
 
-                    $stmt = $conn->prepare("INSERT INTO todos (task, position, list_id, user_id, due_date) VALUES (:task, :position, :list_id, :user_id, :due_date)");
+                    $stmt = $conn->prepare("INSERT INTO todos (task, description, position, list_id, user_id, due_date) VALUES (:task, :description, :position, :list_id, :user_id, :due_date)");
                     $stmt->bindParam(':task', $data->text);
+                    $stmt->bindValue(':description', $data->description ?? '');
                     $stmt->bindParam(':position', $newPos, PDO::PARAM_INT);
                     $stmt->bindParam(':list_id', $data->list_id, PDO::PARAM_INT);
                     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -136,6 +136,24 @@ if ($method === 'POST') {
                     $stmt->execute();
                     $lastId = $conn->lastInsertId();
                     echo json_encode(['id' => $lastId, 'name' => $data->name]);
+                }
+                break;
+            case 'delete':
+                if (!empty($data->id)) {
+                    $list_id = $data->id;
+                    $stmt = $conn->prepare("DELETE FROM lists WHERE id = :id AND user_id = :user_id");
+                    $stmt->bindParam(':id', $list_id, PDO::PARAM_INT);
+                    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+
+                    if ($stmt->execute()) {
+                        echo json_encode(['success' => true]);
+                    } else {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Failed to delete list.']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'List ID not provided.']);
                 }
                 break;
         }

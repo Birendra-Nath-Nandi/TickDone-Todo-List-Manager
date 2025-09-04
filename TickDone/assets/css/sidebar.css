@@ -1,0 +1,178 @@
+/* TickDone-Todo-List-Manager/TickDone/assets/css/sidebar.css */
+
+.sidebar {
+    flex-basis: 280px;
+    flex-shrink: 0;
+    background-color: var(--primary-color);
+    border-right: 1px solid var(--secondary-color);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: var(--text-color);
+    z-index: 10;
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.sidebar-nav {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.nav-section {
+    margin-bottom: 25px;
+}
+
+.nav-title {
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Add position relative for positioning the delete button */
+.sidebar-nav li {
+    position: relative;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 200ms ease;
+}
+
+.sidebar-nav .nav-link svg {
+    fill: var(--secondary-color);
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: fill 200ms ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: var(--background);
+}
+
+.sidebar-nav .nav-link.active {
+    background-color: var(--accent-color);
+    color: var(--background);
+    font-weight: 600;
+}
+
+.sidebar-nav .nav-link.active svg {
+    fill: var(--background);
+}
+
+.nav-text {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-count {
+    font-size: 0.8rem;
+    background-color: var(--background);
+    color: var(--secondary-color);
+    border-radius: 5px;
+    padding: 2px 6px;
+    font-weight: 600;
+}
+
+.sidebar-nav .nav-link.active .nav-count {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--background);
+}
+
+.list-color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--secondary-color);
+    flex-shrink: 0;
+}
+
+.add-new-button {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    border-radius: 8px;
+}
+
+.add-new-button:hover {
+    color: var(--accent-color);
+}
+
+/* Styles for the delete list button */
+.delete-list-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 200ms ease, background-color 200ms ease;
+}
+
+/* Show delete button when hovering the parent list item */
+.sidebar-nav li:hover .delete-list-btn {
+    opacity: 1;
+}
+
+.delete-list-btn:hover {
+    background-color: #442020; /* Dark red background on hover */
+}
+
+.delete-list-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: #ff8080; /* Red icon color */
+}
+
+.sidebar-footer {
+    padding-top: 20px;
+    border-top: 1px solid var(--secondary-color);
+}
+
+.logout-button {
+    color: var(--secondary-color);
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+    border-radius: 8px;
+}
+
+.logout-button:hover {
+    color: #ff5555;
+    background-color: var(--background);
+}

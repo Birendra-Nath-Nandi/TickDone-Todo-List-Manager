@@ -1,0 +1,101 @@
+/* TickDone-Todo-List-Manager/TickDone/assets/css/modal.css */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+@keyframes modal-fade-in {
+    from {
+        transform: translateY(-20px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background-color: var(--primary-color);
+    padding: 30px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--secondary-color);
+    animation: modal-fade-in 0.3s ease-out forwards;
+}
+
+.modal-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.modal-input {
+    width: 100%;
+    padding: 12px 18px;
+    background: var(--background);
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--text-color);
+    caret-color: var(--accent-color);
+    transition: border-color 200ms ease;
+    margin-bottom: 25px;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.modal-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: opacity 200ms ease;
+}
+
+.modal-button.secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.modal-button.primary {
+    background-color: var(--accent-color);
+    color: var(--background);
+}
+
+.modal-button:hover {
+    opacity: 0.9;
+}

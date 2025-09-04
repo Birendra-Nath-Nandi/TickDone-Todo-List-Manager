@@ -7,7 +7,9 @@
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="./assets/css/app-layout.css">
+    <link rel="stylesheet" href="./assets/css/sidebar.css">
     <link rel="stylesheet" href="./assets/css/details-panel.css">
+    <link rel="stylesheet" href="./assets/css/modal.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body>
@@ -47,11 +49,6 @@
                     <p class="nav-title">LISTS</p>
                     <ul id="lists-container"></ul>
                     <button class="add-new-button" id="add-list-btn">+ Add New List</button>
-                    <div id="add-list-form" class="add-new-form" style="display: none;">
-                        <input type="text" id="new-list-input" placeholder="List Name">
-                        <button id="save-list-btn">Save</button>
-                        <button id="cancel-list-btn">Cancel</button>
-                    </div>
                 </div>
             </nav>
             <div class="sidebar-footer">
@@ -121,6 +118,17 @@
                 <button id="save-changes-btn" class="panel-button primary">Save Changes</button>
             </div>
         </aside>
+    </div>
+    
+    <div id="add-list-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Create New List</h3>
+            <input type="text" id="new-list-name-input" class="modal-input" placeholder="e.g. Work, Groceries...">
+            <div class="modal-actions">
+                <button id="cancel-new-list-btn" class="modal-button secondary">Cancel</button>
+                <button id="save-new-list-btn" class="modal-button primary">Create List</button>
+            </div>
+        </div>
     </div>
 
     <script src="./assets/js/app.js" defer></script>
