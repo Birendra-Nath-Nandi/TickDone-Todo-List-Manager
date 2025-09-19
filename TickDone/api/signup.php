@@ -72,7 +72,13 @@ if (!empty($data->username) && !empty($data->email) && !empty($data->password)) 
             $mail->setFrom('no-reply@tickdone.com', 'TickDone');
             $mail->addAddress($data->email);
 
-            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $protocol = 'http';
+            if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) {
+                $protocol = 'https';
+            }
+            if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+                $protocol = 'https';
+            }
             $host = $_SERVER['HTTP_HOST'];
             $path = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
             $verification_link = "{$protocol}://{$host}{$path}/verify.php?token=" . $verification_token;
