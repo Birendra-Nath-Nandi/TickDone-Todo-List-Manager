@@ -28,13 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- UI Update Function ---
     function updateProfileUI(data) {
-        usernameEl.textContent = data.username || 'N/A';
-        emailEl.textContent = data.email || 'N/A';
-        firstNameEl.textContent = data.first_name || 'Not Set'; // Updated
-        lastNameEl.textContent = data.last_name || 'Not Set';   // Updated
-        ageEl.textContent = data.age || 'Not Set';
-        joiningDateEl.textContent = data.joining_date || 'N/A';
+    usernameEl.textContent = data.username || 'N/A';
+    emailEl.textContent = data.email || 'N/A';
+    firstNameEl.textContent = data.first_name || 'Not Set';
+    
+    // Conditionally display the last name
+    if (data.last_name && data.last_name !== 'Not Set') {
+        lastNameEl.textContent = ' ' + data.last_name;
+    } else {
+        lastNameEl.textContent = '';
     }
+    
+    ageEl.textContent = data.age || 'Not Set';
+    joiningDateEl.textContent = data.joining_date || 'N/A';
+}
 
     // --- Initial Load ---
     fetchProfileData();
